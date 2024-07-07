@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample HTML Page</title>
+</head>
+<body>
+    <h1>Welcome to My Sample Page</h1>
+    <p>This is some sample text. Feel free to edit it as you like.</p>
+    <label for="sampleTextBox">Enter some text:</label>
+    <input type="text" id="sampleTextBox" name="sampleTextBox">
+</body>
+</html>
