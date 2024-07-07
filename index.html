@@ -1,14 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample HTML Page</title>
+    <title>Matrett Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            margin: 20px 0;
+        }
+        .leaderboard {
+            width: 100%;
+            max-width: 600px;
+            border-collapse: collapse;
+        }
+        .leaderboard th, .leaderboard td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        .leaderboard th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .vote-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .vote-button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to My Sample Page</h1>
-    <p>This is some sample text. Feel free to edit it as you like.</p>
-    <label for="sampleTextBox">Enter some text:</label>
-    <input type="text" id="sampleTextBox" name="sampleTextBox">
+
+    <h1>Leaderboard over Matretter</h1>
+    <table class="leaderboard">
+        <thead>
+            <tr>
+                <th>Matrett</th>
+                <th>Stemmer</th>
+                <th>Stem</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+            <!-- Data vil bli dynamisk lagt til her -->
+        </tbody>
+    </table>
+
+    <script>
+        // Eksempel data, kan utvides
+        const dishes = [
+            { name: 'Pizza', votes: 0 },
+            { name: 'Sushi', votes: 0 },
+            { name: 'Burger', votes: 0 },
+            { name: 'Taco', votes: 0 }
+        ];
+
+        function renderLeaderboard() {
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            leaderboardBody.innerHTML = '';
+
+            // Sorter matrettene etter stemmer, høyest først
+            dishes.sort((a, b) => b.votes - a.votes);
+
+            dishes.forEach((dish, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${dish.name}</td>
+                    <td>${dish.votes}</td>
+                    <td><button class="vote-button" onclick="vote(${index})">Stem</button></td>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+        }
+
+        function vote(index) {
+            dishes[index].votes++;
+            renderLeaderboard();
+        }
+
+        // Initial render
+        renderLeaderboard();
+    </script>
+
 </body>
 </html>
