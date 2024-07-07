@@ -62,39 +62,43 @@
     </table>
 
     <script>
-        // Eksempel data, kan utvides
-        const dishes = [
-            { name: 'Pizza', votes: 0 },
-            { name: 'Sushi', votes: 0 },
-            { name: 'Burger', votes: 0 },
-            { name: 'Taco', votes: 0 }
-        ];
+        async function fetchDishes() {
+            const response = await fetch('/api/dishes');
+            const dishes = await response.json();
+            renderLeaderboard(dishes);
+        }
 
-        function renderLeaderboard() {
+        function renderLeaderboard(dishes) {
             const leaderboardBody = document.getElementById('leaderboard-body');
             leaderboardBody.innerHTML = '';
 
             // Sorter matrettene etter stemmer, høyest først
             dishes.sort((a, b) => b.votes - a.votes);
 
-            dishes.forEach((dish, index) => {
+            dishes.forEach(dish => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${dish.name}</td>
                     <td>${dish.votes}</td>
-                    <td><button class="vote-button" onclick="vote(${index})">Stem</button></td>
+                    <td><button class="vote-button" onclick="vote(${dish.id})">Stem</button></td>
                 `;
                 leaderboardBody.appendChild(row);
             });
         }
 
-        function vote(index) {
-            dishes[index].votes++;
-            renderLeaderboard();
+        async function vote(id) {
+            await fetch('/api/vote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id })
+            });
+            fetchDishes();
         }
 
-        // Initial render
-        renderLeaderboard();
+        // Initial fetch
+        fetchDishes();
     </script>
 
 </body>
