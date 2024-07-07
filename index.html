@@ -3,103 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrett Leaderboard</title>
+    <title>Høyere eller Lavere</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             height: 100vh;
-            background-color: #f4f4f4;
+            margin: 0;
+            background-color: #222;
+            color: #fff;
+            transition: background-color 0.5s;
         }
-        h1 {
-            margin: 20px 0;
-        }
-        .leaderboard {
-            width: 100%;
-            max-width: 600px;
-            border-collapse: collapse;
-        }
-        .leaderboard th, .leaderboard td {
-            border: 1px solid #ddd;
-            padding: 8px;
+
+        .container {
             text-align: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
-        .leaderboard th {
-            background-color: #4CAF50;
-            color: white;
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            color: #FFD700;
+            text-shadow: 2px 2px #000;
         }
-        .vote-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
+
+        #current-number {
+            font-size: 3em;
+            margin: 20px 0;
+            color: #1E90FF;
+            text-shadow: 2px 2px #000;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            margin: 10px;
             cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            color: #fff;
+            background-color: #555;
         }
-        .vote-button:hover {
-            background-color: #45a049;
+
+        button:hover {
+            background-color: #777;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #FF4500;
+        }
+
+        #score {
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: #32CD32;
+        }
+
+        .game-over {
+            display: none;
+            font-size: 1.5em;
+            color: #FF4500;
+            margin-top: 20px;
+        }
+
+        #restart-button {
+            padding: 10px 20px;
+            font-size: 1em;
+            margin-top: 20px;
+            background-color: #FF4500;
+            color: #fff;
+        }
+
+        #restart-button:hover {
+            background-color: #FF6347;
+        }
+
+        .score-box {
+            text-align: center;
+            background-color: #444;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .red-background {
+            background-color: rgb(253, 76, 76) !important;
         }
     </style>
 </head>
-<body>
-
-    <h1>Leaderboard over Matretter</h1>
-    <table class="leaderboard">
-        <thead>
-            <tr>
-                <th>Matrett</th>
-                <th>Stemmer</th>
-                <th>Stem</th>
-            </tr>
-        </thead>
-        <tbody id="leaderboard-body">
-            <!-- Data vil bli dynamisk lagt til her -->
-        </tbody>
-    </table>
-
+<body id="body">
+    <div class="container" id="main-container">
+        <h1>Høyere eller Lavere</h1>
+        <p>Gjett om datamaskinen sitt tall er høyere eller lavere enn ditt. (0-100)</p>
+        <div class="game">
+            <p id="current-number">Start</p>
+            <button id="higher-button">Høyere</button>
+            <button id="lower-button">Lavere</button>
+            <p id="message"></p>
+            <p id="score">Antall Riktige: 0</p>
+            <div class="game-over" id="game-over">
+                <p>Game Over!</p>
+                <button id="restart-button">Start på nytt</button>
+            </div>
+        </div>
+    </div>
+    <div class="score-box" id="score-box">
+        <p id="score-message"></p>
+    </div>
     <script>
-        async function fetchDishes() {
-            const response = await fetch('/api/dishes');
-            const dishes = await response.json();
-            renderLeaderboard(dishes);
+        let currentNumber = Math.floor(Math.random() * 101);
+        let gameActive = true;
+        let score = 0;
+
+        document.getElementById('current-number').innerText = currentNumber;
+
+        document.getElementById('higher-button').addEventListener('click', () => guess('higher'));
+        document.getElementById('lower-button').addEventListener('click', () => guess('lower'));
+        document.getElementById('restart-button').addEventListener('click', restartGame);
+
+        function guess(direction) {
+            if (!gameActive) return;
+
+            const newNumber = Math.floor(Math.random() * 101);
+            const correctGuess = (direction === 'higher' && newNumber > currentNumber) ||
+                                 (direction === 'lower' && newNumber < currentNumber);
+
+            if (correctGuess) {
+                currentNumber = newNumber;
+                document.getElementById('current-number').innerText = currentNumber;
+                score++;
+                document.getElementById('score').innerText = `Antall Riktige: ${score}`;
+            } else {
+                gameActive = false;
+                document.getElementById('message').innerText = `Feil! Datamaskinen sitt tall var ${newNumber}.`;
+                document.getElementById('game-over').style.display = 'block';
+                document.getElementById('higher-button').style.display = 'none';
+                document.getElementById('lower-button').style.display = 'none';
+                document.getElementById('score-box').style.display = 'block';
+                document.getElementById('body').classList.add('red-background');
+                displayScoreMessage();
+            }
         }
 
-        function renderLeaderboard(dishes) {
-            const leaderboardBody = document.getElementById('leaderboard-body');
-            leaderboardBody.innerHTML = '';
-
-            // Sorter matrettene etter stemmer, høyest først
-            dishes.sort((a, b) => b.votes - a.votes);
-
-            dishes.forEach(dish => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${dish.name}</td>
-                    <td>${dish.votes}</td>
-                    <td><button class="vote-button" onclick="vote(${dish.id})">Stem</button></td>
-                `;
-                leaderboardBody.appendChild(row);
-            });
+        function displayScoreMessage() {
+            let message = "";
+            if (score <= 2) {
+                message = "Prøver du i det hele tatt?";
+            } else if (score <= 4) {
+                message = "Kom igjen! Du klarer bedre.";
+            } else if (score <= 6) {
+                message = "Bra jobba!";
+            } else {
+                message = "Fantastisk! Du er en mester!";
+            }
+            document.getElementById('score-message').innerText = message;
         }
 
-        async function vote(id) {
-            await fetch('/api/vote', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id })
-            });
-            fetchDishes();
+        function restartGame() {
+            gameActive = true;
+            score = 0;
+            currentNumber = Math.floor(Math.random() * 101);
+            document.getElementById('current-number').innerText = currentNumber;
+            document.getElementById('score').innerText = `Antall Riktige: ${score}`;
+            document.getElementById('message').innerText = '';
+            document.getElementById('game-over').style.display = 'none';
+            document.getElementById('higher-button').style.display = 'inline-block';
+            document.getElementById('lower-button').style.display = 'inline-block';
+            document.getElementById('score-box').style.display = 'none';
+            document.getElementById('body').classList.remove('red-background');
+            document.getElementById('score-message').innerText = '';
         }
-
-        // Initial fetch
-        fetchDishes();
     </script>
-
 </body>
 </html>
