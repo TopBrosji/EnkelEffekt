@@ -34,6 +34,13 @@
             text-shadow: 2px 2px #000;
         }
 
+        #current-country {
+            font-size: 2em;
+            margin: 20px 0;
+            color: #1E90FF;
+            text-shadow: 2px 2px #000;
+        }
+
         #current-number {
             font-size: 3em;
             margin: 20px 0;
@@ -117,9 +124,10 @@
 <body id="body">
     <div class="container" id="main-container">
         <h1>Høyere eller Lavere</h1>
-        <p>Gjett om datamaskinen sitt tall er høyere eller lavere enn ditt. (0-100)</p>
+        <p>Gjett om befolkningen i landet er høyere eller lavere enn det viste tallet.</p>
         <div class="game">
-            <p id="current-number">Start</p>
+            <p id="current-country">Land</p>
+            <p id="current-number">Tall</p>
             <button id="higher-button">Høyere</button>
             <button id="lower-button">Lavere</button>
             <p id="message"></p>
@@ -137,33 +145,257 @@
         <p>Beste Score: <span id="best-score">0</span></p>
     </div>
     <script>
-        let currentNumber = Math.floor(Math.random() * 101);
+        const countryData = [
+            {country: 'Kina', population: 1411.78},
+            {country: 'India', population: 1393.41},
+            {country: 'USA', population: 332.92},
+            {country: 'Indonesia', population: 276.36},
+            {country: 'Pakistan', population: 225.20},
+            {country: 'Brasil', population: 214.33},
+            {country: 'Nigeria', population: 206.14},
+            {country: 'Bangladesh', population: 166.30},
+            {country: 'Russland', population: 145.91},
+            {country: 'Mexico', population: 130.26},
+            {country: 'Japan', population: 125.84},
+            {country: 'Etiopia', population: 120.81},
+            {country: 'Filippinene', population: 113.40},
+            {country: 'Egypt', population: 106.16},
+            {country: 'Vietnam', population: 98.17},
+            {country: 'DR Kongo', population: 95.09},
+            {country: 'Tyrkia', population: 86.04},
+            {country: 'Iran', population: 85.03},
+            {country: 'Tyskland', population: 83.88},
+            {country: 'Thailand', population: 70.08},
+            {country: 'Storbritannia', population: 68.15},
+            {country: 'Frankrike', population: 65.27},
+            {country: 'Italia', population: 59.55},
+            {country: 'Tanzania', population: 61.50},
+            {country: 'Sør-Afrika', population: 59.31},
+            {country: 'Myanmar', population: 54.41},
+            {country: 'Kenya', population: 53.77},
+            {country: 'Sør-Korea', population: 51.78},
+            {country: 'Colombia', population: 51.87},
+            {country: 'Spania', population: 46.75},
+            {country: 'Uganda', population: 45.74},
+            {country: 'Argentina', population: 45.38},
+            {country: 'Algerie', population: 44.00},
+            {country: 'Sudan', population: 44.70},
+            {country: 'Ukraina', population: 39.75},
+            {country: 'Irak', population: 41.12},
+            {country: 'Afghanistan', population: 40.22},
+            {country: 'Polen', population: 37.80},
+            {country: 'Canada', population: 38.01},
+            {country: 'Marokko', population: 37.35},
+            {country: 'Saudi-Arabia', population: 35.61},
+            {country: 'Usbekistan', population: 34.45},
+            {country: 'Malaysia', population: 33.14},
+            {country: 'Peru', population: 33.00},
+            {country: 'Angola', population: 35.54},
+            {country: 'Ghana', population: 33.27},
+            {country: 'Mosambik', population: 33.15},
+            {country: 'Jemen', population: 31.39},
+            {country: 'Nepal', population: 29.49},
+            {country: 'Venezuela', population: 29.29},
+            {country: 'Madagaskar', population: 28.68},
+            {country: 'Kamerun', population: 27.74},
+            {country: 'Elfenbenskysten', population: 26.38},
+            {country: 'Nord-Korea', population: 25.87},
+            {country: 'Australia', population: 25.51},
+            {country: 'Niger', population: 24.94},
+            {country: 'Sri Lanka', population: 21.44},
+            {country: 'Burkina Faso', population: 22.38},
+            {country: 'Mali', population: 21.57},
+            {country: 'Romania', population: 19.03},
+            {country: 'Malawi', population: 19.65},
+            {country: 'Chile', population: 19.49},
+            {country: 'Kasakhstan', population: 19.21},
+            {country: 'Zambia', population: 19.35},
+            {country: 'Guatemala', population: 18.38},
+            {country: 'Ecuador', population: 17.64},
+            {country: 'Syria', population: 17.50},
+            {country: 'Nederland', population: 17.01},
+            {country: 'Senegal', population: 17.20},
+            {country: 'Kambodsja', population: 16.95},
+            {country: 'Tsjad', population: 16.43},
+            {country: 'Somalia', population: 16.36},
+            {country: 'Zimbabwe', population: 15.99},
+            {country: 'Guinea', population: 13.13},
+            {country: 'Rwanda', population: 13.28},
+            {country: 'Benin', population: 13.12},
+            {country: 'Burundi', population: 12.55},
+            {country: 'Tunisia', population: 12.11},
+            {country: 'Bolivia', population: 12.03},
+            {country: 'Belgia', population: 11.56},
+            {country: 'Haiti', population: 11.40},
+            {country: 'Cuba', population: 11.20},
+            {country: 'Sør-Sudan', population: 11.19},
+            {country: 'Den dominikanske republikk', population: 10.95},
+            {country: 'Tsjekkia', population: 10.52},
+            {country: 'Hellas', population: 10.39},
+            {country: 'Jordan', population: 10.20},
+            {country: 'Portugal', population: 10.28},
+            {country: 'Aserbajdsjan', population: 10.11},
+            {country: 'Sverige', population: 10.23},
+            {country: 'Honduras', population: 10.12},
+            {country: 'De forente arabiske emirater', population: 9.89},
+            {country: 'Ungarn', population: 9.55},
+            {country: 'Tadsjikistan', population: 9.75},
+            {country: 'Hviterussland', population: 9.47},
+            {country: 'Østerrike', population: 8.92},
+            {country: 'Papua Ny-Guinea', population: 9.12},
+            {country: 'Serbia', population: 8.63},
+            {country: 'Israel', population: 9.45},
+            {country: 'Sveits', population: 8.70},
+            {country: 'Togo', population: 8.62},
+            {country: 'Sierra Leone', population: 8.25},
+            {country: 'Hongkong', population: 7.50},
+            {country: 'Laos', population: 7.28},
+            {country: 'Paraguay', population: 7.05},
+            {country: 'Bulgaria', population: 6.94},
+            {country: 'Libya', population: 6.87},
+            {country: 'Libanon', population: 6.82},
+            {country: 'Nicaragua', population: 6.71},
+            {country: 'Kirgizistan', population: 6.71},
+            {country: 'El Salvador', population: 6.52},
+            {country: 'Turkmenistan', population: 6.03},
+            {country: 'Singapore', population: 5.69},
+            {country: 'Danmark', population: 5.83},
+            {country: 'Finland', population: 5.55},
+            {country: 'Den demokratiske republikken Kongo', population: 5.66},
+            {country: 'Slovakia', population: 5.46},
+            {country: 'Norge', population: 5.42},
+            {country: 'Oman', population: 5.11},
+            {country: 'Palestina', population: 5.10},
+            {country: 'Liberia', population: 5.18},
+            {country: 'New Zealand', population: 5.08},
+            {country: 'Costa Rica', population: 5.18},
+            {country: 'Irland', population: 5.01},
+            {country: 'Den sentralafrikanske republikk', population: 4.92},
+            {country: 'Mauritania', population: 4.87},
+            {country: 'Panama', population: 4.38},
+            {country: 'Kuwait', population: 4.67},
+            {country: 'Kroatia', population: 4.00},
+            {country: 'Moldova', population: 2.64},
+            {country: 'Georgia', population: 3.73},
+            {country: 'Eritrea', population: 3.54},
+            {country: 'Uruguay', population: 3.52},
+            {country: 'Bosnia og Hercegovina', population: 3.28},
+            {country: 'Mongolia', population: 3.41},
+            {country: 'Armenia', population: 2.97},
+            {country: 'Jamaica', population: 2.97},
+            {country: 'Qatar', population: 2.93},
+            {country: 'Albania', population: 2.87},
+            {country: 'Litauen', population: 2.79},
+            {country: 'Namibia', population: 2.54},
+            {country: 'Gambia', population: 2.41},
+            {country: 'Botswana', population: 2.39},
+            {country: 'Gabon', population: 2.34},
+            {country: 'Lesotho', population: 2.14},
+            {country: 'Nord-Makedonia', population: 2.08},
+            {country: 'Slovenia', population: 2.10},
+            {country: 'Guinea-Bissau', population: 2.06},
+            {country: 'Latvia', population: 1.89},
+            {country: 'Bahrain', population: 1.70},
+            {country: 'Ekvatorial-Guinea', population: 1.50},
+            {country: 'Trinidad og Tobago', population: 1.40},
+            {country: 'Estland', population: 1.33},
+            {country: 'Øst-Timor', population: 1.37},
+            {country: 'Mauritius', population: 1.27},
+            {country: 'Kypros', population: 1.21},
+            {country: 'Eswatini', population: 1.18},
+            {country: 'Djibouti', population: 1.00},
+            {country: 'Fiji', population: 0.89},
+            {country: 'Komorene', population: 0.88},
+            {country: 'Guyana', population: 0.78},
+            {country: 'Bhutan', population: 0.77},
+            {country: 'Salomonøyene', population: 0.71},
+            {country: 'Montenegro', population: 0.62},
+            {country: 'Luxembourg', population: 0.63},
+            {country: 'Surinam', population: 0.59},
+            {country: 'Kapp Verde', population: 0.55},
+            {country: 'Mikronesia', population: 0.54},
+            {country: 'Malta', population: 0.52},
+            {country: 'Brunei', population: 0.44},
+            {country: 'Belize', population: 0.44},
+            {country: 'Bahamas', population: 0.40},
+            {country: 'Island', population: 0.37},
+            {country: 'Vanuatu', population: 0.30},
+            {country: 'Barbados', population: 0.29},
+            {country: 'São Tomé og Príncipe', population: 0.22},
+            {country: 'Samoa', population: 0.20},
+            {country: 'Saint Lucia', population: 0.18},
+            {country: 'Kiribati', population: 0.12},
+            {country: 'Grenada', population: 0.11},
+            {country: 'Saint Vincent og Grenadinene', population: 0.11},
+            {country: 'Tonga', population: 0.10},
+            {country: 'Seychellene', population: 0.10},
+            {country: 'Antigua og Barbuda', population: 0.10},
+            {country: 'Andorra', population: 0.08},
+            {country: 'Dominica', population: 0.07},
+            {country: 'Marshalløyene', population: 0.06},
+            {country: 'Saint Kitts og Nevis', population: 0.05},
+            {country: 'Monaco', population: 0.04},
+            {country: 'Liechtenstein', population: 0.04},
+            {country: 'San Marino', population: 0.03},
+            {country: 'Palau', population: 0.02},
+            {country: 'Tuvalu', population: 0.01},
+            {country: 'Nauru', population: 0.01},
+            {country: 'Vatikanstaten', population: 0.001}
+        ];
+
+        let currentCountryData;
         let gameActive = true;
         let score = 0;
         let bestScore = 0;
-
-        document.getElementById('current-number').innerText = currentNumber;
 
         document.getElementById('higher-button').addEventListener('click', () => guess('higher'));
         document.getElementById('lower-button').addEventListener('click', () => guess('lower'));
         document.getElementById('restart-button').addEventListener('click', restartGame);
 
+        function getRandomCountryData() {
+            return countryData[Math.floor(Math.random() * countryData.length)];
+        }
+
+        function getRandomPopulation(actualPopulation) {
+            const variation = (Math.random() - 0.5) * actualPopulation * 0.4; // Variasjon på +/- 20% av faktiske befolkningen
+            const randomPopulation = actualPopulation + variation;
+            return formatPopulation(randomPopulation);
+        }
+
+        function formatPopulation(population) {
+            if (population >= 1000) {
+                return (population / 1000).toFixed(2) + " Mrd";
+            } else if (population < 1) {
+                return (population * 1000).toFixed(0) + " K";
+            } else {
+                return population.toFixed(2) + " Mill";
+            }
+        }
+
+        function startNewRound() {
+            currentCountryData = getRandomCountryData();
+            const randomPopulation = getRandomPopulation(currentCountryData.population);
+
+            document.getElementById('current-country').innerText = currentCountryData.country;
+            document.getElementById('current-number').innerText = randomPopulation;
+        }
+
         function guess(direction) {
             if (!gameActive) return;
 
-            const newNumber = Math.floor(Math.random() * 101);
-            const correctGuess = (direction === 'higher' && newNumber > currentNumber) ||
-                                 (direction === 'lower' && newNumber < currentNumber);
+            const displayedPopulation = parseFloat(document.getElementById('current-number').innerText);
+            const actualPopulation = currentCountryData.population;
+            const correctGuess = (direction === 'higher' && actualPopulation > displayedPopulation) ||
+                                 (direction === 'lower' && actualPopulation < displayedPopulation);
 
             if (correctGuess) {
-                currentNumber = newNumber;
-                document.getElementById('current-number').innerText = currentNumber;
                 score++;
                 document.getElementById('score').innerText = `Antall Riktige: ${score}`;
                 updateBackgroundColor();
+                startNewRound();
             } else {
                 gameActive = false;
-                document.getElementById('message').innerText = `Feil! Datamaskinen sitt tall var ${newNumber}.`;
+                document.getElementById('message').innerText = `Feil! Befolkningen i ${currentCountryData.country} er ${actualPopulation.toFixed(2)} Mill.`;
                 document.getElementById('game-over').style.display = 'block';
                 document.getElementById('higher-button').style.display = 'none';
                 document.getElementById('lower-button').style.display = 'none';
@@ -204,8 +436,6 @@
         function restartGame() {
             gameActive = true;
             score = 0;
-            currentNumber = Math.floor(Math.random() * 101);
-            document.getElementById('current-number').innerText = currentNumber;
             document.getElementById('score').innerText = `Antall Riktige: ${score}`;
             document.getElementById('message').innerText = '';
             document.getElementById('game-over').style.display = 'none';
@@ -215,7 +445,12 @@
             document.getElementById('body').classList.remove('red-background');
             document.getElementById('score-message').innerText = '';
             document.body.style.backgroundColor = '#222';
+            startNewRound();
         }
+
+        // Start the first round when the page loads
+        startNewRound();
     </script>
 </body>
 </html>
+
